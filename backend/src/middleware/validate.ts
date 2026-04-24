@@ -99,6 +99,14 @@ export const createStoreValidation = [
   handleValidationErrors,
 ];
 
+export const assignStoreOwnerValidation = [
+  body('owner_id')
+    .optional({ nullable: true })
+    .isInt({ min: 1 })
+    .withMessage('Owner ID must be a valid integer when provided.'),
+  handleValidationErrors,
+];
+
 export const ratingValidation = [
   body('store_id')
     .isInt({ min: 1 })

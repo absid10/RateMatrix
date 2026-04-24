@@ -494,6 +494,19 @@ tbody td {
   font-size: 1rem;
 }
 
+.owner-link-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 260px;
+}
+
+.owner-link-select {
+  min-width: 180px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+}
+
 /* ----- Page headers ----- */
 
 .page-header {

@@ -13,10 +13,12 @@ export async function getStores(req: AuthRequest, res: Response): Promise<void> 
     let query = `
       SELECT 
         s.id, s.name, s.email, s.address, s.owner_id,
+        MAX(o.name) as owner_name,
         COALESCE(AVG(r.rating), 0) as overall_rating,
         COUNT(r.id) as total_ratings
       FROM stores s
       LEFT JOIN ratings r ON r.store_id = s.id
+      LEFT JOIN users o ON o.id = s.owner_id
       WHERE 1=1
     `;
     const params: any[] = [];
@@ -35,7 +37,7 @@ export async function getStores(req: AuthRequest, res: Response): Promise<void> 
     // sorting
     const sortBy = (req.query.sortBy as string) || 'name';
     const order = (req.query.order as string) === 'desc' ? 'DESC' : 'ASC';
-    const allowedSortCols = ['name', 'email', 'address', 'overall_rating'];
+    const allowedSortCols = ['name', 'email', 'address', 'overall_rating', 'owner_name'];
     if (allowedSortCols.includes(sortBy)) {
       if (sortBy === 'name' || sortBy === 'email' || sortBy === 'address') {
         query += ` ORDER BY s.${sortBy} ${order}`;
@@ -128,6 +130,60 @@ export async function createStore(req: AuthRequest, res: Response): Promise<void
     });
   } catch (err) {
     console.error('Create store error:', err);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+}
+
+// PATCH /api/stores/:id/owner  (admin only)
+export async function assignStoreOwner(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    const { owner_id } = req.body as { owner_id: number | null };
+
+    if (owner_id === undefined) {
+      res.status(400).json({ message: 'owner_id is required. Use null to unassign owner.' });
+      return;
+    }
+
+    const [storeRows] = await pool.query<RowDataPacket[]>(
+      'SELECT id FROM stores WHERE id = ?',
+      [id]
+    );
+
+    if (storeRows.length === 0) {
+      res.status(404).json({ message: 'Store not found.' });
+      return;
+    }
+
+    if (owner_id !== null) {
+      const [ownerRows] = await pool.query<RowDataPacket[]>(
+        'SELECT id, role FROM users WHERE id = ?',
+        [owner_id]
+      );
+
+      if (ownerRows.length === 0) {
+        res.status(404).json({ message: 'Owner user not found.' });
+        return;
+      }
+
+      if (ownerRows[0].role !== 'owner') {
+        res.status(400).json({ message: 'The specified user is not a store owner.' });
+        return;
+      }
+    }
+
+    await pool.query<ResultSetHeader>(
+      'UPDATE stores SET owner_id = ? WHERE id = ?',
+      [owner_id, id]
+    );
+
+    res.json({
+      message: owner_id === null
+        ? 'Store owner removed successfully.'
+        : 'Store owner assigned successfully.',
+    });
+  } catch (err) {
+    console.error('Assign store owner error:', err);
     res.status(500).json({ message: 'Internal server error.' });
   }
 }

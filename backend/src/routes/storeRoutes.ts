@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { getStores, getStoreById, createStore } from '../controllers/storeController';
-import { createStoreValidation } from '../middleware/validate';
+import { getStores, getStoreById, createStore, assignStoreOwner } from '../controllers/storeController';
+import { createStoreValidation, assignStoreOwnerValidation } from '../middleware/validate';
 import { verifyToken, authorizeRoles } from '../middleware/auth';
 
 const router = Router();
@@ -13,5 +13,8 @@ router.get('/:id', verifyToken, authorizeRoles('admin'), getStoreById);
 
 // create store - admin only
 router.post('/', verifyToken, authorizeRoles('admin'), createStoreValidation, createStore);
+
+// assign/unassign store owner - admin only
+router.patch('/:id/owner', verifyToken, authorizeRoles('admin'), assignStoreOwnerValidation, assignStoreOwner);
 
 export default router;

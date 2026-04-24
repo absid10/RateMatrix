@@ -15,6 +15,7 @@ export interface Store {
   email: string;
   address: string | null;
   owner_id: number | null;
+  owner_name?: string | null;
   overall_rating: number;
   total_ratings: number;
   // only present for normal users
