@@ -1,0 +1,17 @@
+# Root ignores for monorepo
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.vscode/
+
+# Environment files
+.env
+.env.*
+
+# Build outputs
+**/dist/
+**/coverage/
+
+# Dependencies
+**/node_modules/
