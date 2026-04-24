@@ -27,6 +27,7 @@ Users can rate stores from 1 to 5, and each role sees different functionality af
 ### System Administrator
 
 - Add stores.
+- Link store owners to existing stores.
 - Add users (`admin`, `user`, `owner`).
 - View dashboard counters: total users, stores, ratings.
 - View users list with filters (name, email, address, role) and sorting.
@@ -161,6 +162,7 @@ Frontend URL: `http://localhost:5173`
 - `GET /api/stores` (all authenticated users)
 - `GET /api/stores/:id` (admin)
 - `POST /api/stores` (admin)
+- `PATCH /api/stores/:id/owner` (admin)
 
 ### Ratings
 
