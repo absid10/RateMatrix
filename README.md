@@ -1,6 +1,6 @@
 # RateMatrix
 
-RateMatrix is a full-stack store rating platform built for a role-based coding challenge.
+RateMatrix is a full-stack store rating platform.
 
 Users can rate stores from 1 to 5, and each role sees different functionality after a single login flow.
 
