@@ -1,144 +1,188 @@
-# RateMatrix — Store Rating Platform
+# RateMatrix
 
-A full-stack web application for submitting and managing store ratings. Built with Express.js (TypeScript), MySQL, and React (TypeScript).
+RateMatrix is a full-stack store rating platform built for a role-based coding challenge.
 
-## Features
-
-- **Role-based access control** — Admin, Normal User, Store Owner
-- **Admin dashboard** — User/store/rating statistics, CRUD operations
-- **Store rating system** — 1-5 star ratings with real-time updates
-- **Search & filter** — Filter users and stores by name, email, address
-- **Sortable tables** — Click column headers to sort ascending/descending
-- **Password management** — Secure password update functionality
-- **Form validation** — Client-side and server-side validation
-- **JWT authentication** — Secure token-based auth
+Users can rate stores from 1 to 5, and each role sees different functionality after a single login flow.
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
+| Layer | Tech |
+|---|---|
+| Frontend | React + TypeScript + Vite |
 | Backend | Express.js + TypeScript |
 | Database | MySQL 8 |
 | Auth | JWT + bcrypt |
-| Frontend | React 18 + TypeScript (Vite) |
-| HTTP | Axios |
 
-## Prerequisites
+## Core Features
 
-- Node.js 18+
-- MySQL 8+ running on localhost:3306
-- npm
+- Single authentication system for all roles.
+- Three roles with protected pages: `admin`, `user`, `owner`.
+- Store rating flow with update support (one rating per user per store).
+- Role-aware dashboards.
+- Search/filter/sort capabilities in listing screens.
+- Client-side and server-side validation.
 
-## Getting Started
-
-### 1. Setup the Database
-
-```bash
-cd backend
-npm install
-npm run seed
-```
-
-This creates the `ratematrix` database, tables, and a default admin user:
-- **Email:** admin@ratematrix.com
-- **Password:** Admin@123
-
-### 2. Start the Backend
-
-```bash
-cd backend
-npm run dev
-```
-
-Server runs on http://localhost:5000
-
-### 3. Start the Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-App runs on http://localhost:5173
-
-## User Roles
+## Role Capabilities
 
 ### System Administrator
-- Dashboard with user/store/rating counts
-- Add stores, normal users, and admin users
-- View and filter user/store listings
-- View user details (with store rating for owners)
+
+- Add stores.
+- Add users (`admin`, `user`, `owner`).
+- View dashboard counters: total users, stores, ratings.
+- View users list with filters (name, email, address, role) and sorting.
+- View stores list with filters (name, email, address) and sorting.
+- View user details, including owner store rating details.
+- Change password and logout.
 
 ### Normal User
-- Sign up and log in
-- Browse stores, search by name and address
-- Submit and modify ratings (1-5 stars)
-- Update password
+
+- Sign up (self-registration).
+- Login and logout.
+- Change password.
+- Browse all stores.
+- Search stores by name and address.
+- View overall rating and own submitted rating.
+- Submit and modify rating (1-5).
 
 ### Store Owner
-- View dashboard with average store rating
-- See list of users who rated their store
-- Update password
 
-## Form Validation Rules
+- Login and logout.
+- Change password.
+- View owner dashboard with average rating.
+- View list of users who rated their assigned store(s).
 
-| Field | Rule |
-|-------|------|
-| Name | 20-60 characters |
-| Email | Valid email format |
-| Password | 8-16 chars, 1 uppercase, 1 special character |
-| Address | Max 400 characters |
+## Validation Rules
+
+- Name: minimum 20, maximum 60 characters.
+- Address: required, maximum 400 characters.
+- Password: 8-16 characters, at least one uppercase and one special character.
+- Email: standard email format.
 
 ## Project Structure
 
-```
+```text
 RateMatrix/
-├── backend/
-│   ├── src/
-│   │   ├── server.ts          # Express entry point
-│   │   ├── types.ts           # TypeScript interfaces
-│   │   ├── config/db.ts       # MySQL connection pool
-│   │   ├── middleware/        # Auth & validation
-│   │   ├── routes/            # API route definitions
-│   │   ├── controllers/       # Request handlers
-│   │   └── seed.ts            # DB setup & seeding
-│   ├── package.json
-│   └── tsconfig.json
-├── frontend/
-│   ├── src/
-│   │   ├── App.tsx            # Router & layout
-│   │   ├── types.ts           # Frontend types
-│   │   ├── api/axios.ts       # HTTP client
-│   │   ├── context/           # Auth state
-│   │   ├── components/        # Reusable UI
-│   │   └── pages/             # Role-based pages
-│   ├── package.json
-│   └── vite.config.ts
-└── README.md
+	backend/
+		src/
+			config/
+			controllers/
+			middleware/
+			routes/
+			seed.ts
+			server.ts
+			types.ts
+		package.json
+	frontend/
+		src/
+			api/
+			components/
+			context/
+			pages/
+			App.tsx
+			main.tsx
+			index.css
+		package.json
+	database.sql
+	README.md
 ```
 
-## API Endpoints
+## Local Setup
+
+### Prerequisites
+
+- Node.js 18+
+- MySQL 8 running on `127.0.0.1:3306`
+- npm
+
+### 1. Backend Setup
+
+```bash
+cd backend
+npm install
+```
+
+Create or update `backend/.env`:
+
+```env
+PORT=5000
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=ratematrix
+JWT_SECRET=replace_with_strong_secret
+```
+
+Initialize schema and seed admin user:
+
+```bash
+npm run seed
+```
+
+Run backend:
+
+```bash
+npm run dev
+```
+
+Backend URL: `http://localhost:5000`
+
+### 2. Frontend Setup
+
+```bash
+cd ../frontend
+npm install
+npm run dev
+```
+
+Frontend URL: `http://localhost:5173`
+
+## Default Admin Login
+
+- Email: `admin@ratematrix.com`
+- Password: `Admin@123`
+
+## API Overview
 
 ### Auth
-- `POST /api/auth/signup` — Register (normal user)
-- `POST /api/auth/login` — Login
-- `PUT /api/auth/password` — Update password
 
-### Users (Admin)
-- `GET /api/users` — List users (filterable)
-- `GET /api/users/:id` — User details
-- `POST /api/users` — Create user
+- `POST /api/auth/signup`
+- `POST /api/auth/login`
+- `PUT /api/auth/password`
+
+### Users (admin)
+
+- `GET /api/users`
+- `GET /api/users/:id`
+- `POST /api/users`
 
 ### Stores
-- `GET /api/stores` — List stores
-- `GET /api/stores/:id` — Store details
-- `POST /api/stores` — Create store (Admin)
+
+- `GET /api/stores` (all authenticated users)
+- `GET /api/stores/:id` (admin)
+- `POST /api/stores` (admin)
 
 ### Ratings
-- `POST /api/ratings` — Submit/update rating
-- `GET /api/ratings/store/:storeId` — Store's raters (Owner)
+
+- `POST /api/ratings` (normal user)
+- `GET /api/ratings/store/:storeId` (owner)
 
 ### Dashboard
-- `GET /api/dashboard/admin` — Admin stats
-- `GET /api/dashboard/owner` — Owner stats
+
+- `GET /api/dashboard/admin`
+- `GET /api/dashboard/owner`
+
+## Notes
+
+- Public signup is intentionally for normal users only.
+- Store owner and admin accounts are created by admin users.
+- Admin UI includes direct navigation links for stores and add-store actions.
+
+## Challenge Checklist Mapping
+
+- Express backend: completed.
+- MySQL schema with constraints/indexes: completed.
+- React frontend with role-based screens: completed.
+- Sorting/filtering and rating workflows: completed.
+- Form validation rules: completed in frontend and backend.
+

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../api/axios';
 import StatsCard from '../../components/StatsCard';
 import { DashboardStats } from '../../types';
@@ -45,6 +46,15 @@ export default function AdminDashboard() {
         <StatsCard label="Total Users" value={stats.totalUsers} icon="👥" />
         <StatsCard label="Total Stores" value={stats.totalStores} icon="🏪" />
         <StatsCard label="Total Ratings" value={stats.totalRatings} icon="⭐" />
+      </div>
+
+      <div className="admin-actions card">
+        <h2 className="admin-actions-title">Quick Actions</h2>
+        <div className="admin-actions-grid">
+          <Link to="/admin/users" className="btn btn-secondary">Manage Users</Link>
+          <Link to="/admin/stores" className="btn btn-secondary">Manage Stores</Link>
+          <Link to="/admin/stores/add" className="btn btn-primary">+ Add Store</Link>
+        </div>
       </div>
     </div>
   );

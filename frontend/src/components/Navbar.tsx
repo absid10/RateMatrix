@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 import PasswordModal from './PasswordModal';
@@ -22,6 +22,22 @@ export default function Navbar() {
     }
   }
 
+  function getRoleLinks(): Array<{ to: string; label: string }> {
+    switch (auth.user?.role) {
+      case 'admin':
+        return [
+          { to: '/admin/dashboard', label: 'Dashboard' },
+          { to: '/admin/users', label: 'Users' },
+          { to: '/admin/stores', label: 'Stores' },
+          { to: '/admin/stores/add', label: 'Add Store' },
+        ];
+      case 'owner':
+        return [{ to: '/owner/dashboard', label: 'Owner Dashboard' }];
+      default:
+        return [{ to: '/user/stores', label: 'Stores' }];
+    }
+  }
+
   if (!auth.user) return null;
 
   return (
@@ -30,6 +46,18 @@ export default function Navbar() {
         <Link to={getHomePath()} className="navbar-brand">
           RateMatrix
         </Link>
+
+        <div className="navbar-links">
+          {getRoleLinks().map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) => `navbar-link${isActive ? ' active' : ''}`}
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </div>
 
         <div className="navbar-right">
           <div className="navbar-user">
